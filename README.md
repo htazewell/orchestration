@@ -1,106 +1,93 @@
-# Orchestrator
+# Orchestration
 
-This Python script provides functionality to schedule and execute scripts based on cron expressions. It allows executing both bash and Python scripts and provides options to add script parameters and skip conditions.
+The Orchestration library provides functionality to schedule and execute tasks based on cron expressions. It allows you to add skip conditions and dynamically generate script parameters. This library is designed to simplify the process of automating script execution.
 
-## Dependencies
-- `croniter`: A Python library to parse cron expressions and calculate the next execution time.
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Creating an Orchestrator](#creating-an-orchestrator)
+  - [Adding Tasks](#adding-tasks)
+  - [Adding Scripts](#adding-scripts)
+  - [Adding Skip Conditions](#adding-skip-conditions)
+  - [Repeating Scripts](#repeating-scripts)
+  - [Determining Execution](#determining-execution)
+  - [Executing Tasks](#executing-tasks)
 
-## Usage
-1. Import the required modules:
-```python
-import logging
-import subprocess
-import signal
-import pytz
-import time
-import os
-from croniter import croniter
-from datetime import datetime, timedelta
+## Installation<a name="installation"></a>
+
+To use the Orchestration library, you need to have Python installed. You can then install the library using pip:
+
+```
+pip install orchestration
 ```
 
-2. Configure logging settings:
+## Usage<a name="usage"></a>
+
+### Creating an Orchestrator<a name="creating-an-orchestrator"></a>
+
+To get started with the Orchestrator library, you need to create an instance of the `Orchestrator` class:
+
 ```python
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from orchestration import Orchestrator
+
+orchestrator = Orchestrator()
 ```
 
-3. Create a `Task` object to define a script execution task:
-```python
-task = Task(cron_expression, script_type, interval=1)
-```
-- `cron_expression` (str): A cron expression specifying the schedule of the task.
-- `script_type` (str): The type of script to execute, either 'bash' or 'python'.
-- `interval` (int): The interval in seconds between task executions (default is 1 second).
+### Adding Tasks<a name="adding-tasks"></a>
 
-4. Add scripts to the task using the `add_script` method:
-```python
-task.add_script(script_path, script_parameters=None)
-```
-- `script_path` (str): The path to the script file.
-- `script_parameters` (dict): Optional dictionary of script parameters.
+You can add tasks to the orchestrator using the `add_task` method. The `add_task` method takes two arguments: `cron_expression` and `script_type`. The `cron_expression` specifies the schedule for the task using cron syntax, and the `script_type` specifies the type of script to execute (e.g., 'bash' or 'python').
 
-5. Add skip conditions to the task using the `add_skip` method:
 ```python
-task.add_skip(skip_condition)
+task = orchestrator.add_task('0 * * * *', 'bash')
 ```
-- `skip_condition` (bool): A condition that determines whether the task should be skipped.
 
-6. Execute a script using the `execute_script` method:
+
+You can also specify an optional interval argument to set the interval in seconds between task executions (default is 1 second).
+
+### Adding Scripts<a name="adding-scripts"></a>
+
+You can add scripts to a task using the `add_script` method. The `add_script` method takes the `script_path` argument, which specifies the path to the script file, and an optional `script_parameters` argument, which is a dictionary of parameters to pass to the script.
+
 ```python
-task.execute_script(script_path)
+task.add_script('/path/to/script.sh', {'param1': 'value1', 'param2': 'value2'})
 ```
-- `script_path` (str): The path to the script file.
 
-7. Repeat script execution with different parameters using the `repeat` method:
+### Adding Skip Conditions<a name="adding-skip-conditions"></a>
+
+Skip conditions allow you to specify conditions under which a task should be skipped during execution. You can add skip conditions to a task using the `add_skip` method.
+
 ```python
-task.repeat(script_path, parameters_list)
+task.add_skip(some_skip_condition)
 ```
-- `script_path` (str): The path to the script file.
-- `parameters_list` (list): A list of dictionaries containing different sets of script parameters.
 
-8. Check if the task should be executed using the `should_execute` method:
+
+### Repeating Scripts<a name="repeating-scripts"></a>
+
+If you want to repeat the execution of a script with different parameters, you can use the `repeat` method. The `repeat` method takes the `script_path` argument and a list of `parameters_list`, where each `parameters` is a dictionary of parameters to pass to the script.
+
+```python
+task.repeat('/path/to/script.sh', [{'param1': 'value1'}, {'param2': 'value2'}])
+```
+
+### Determining Execution<a name="determining-execution"></a>
+
+To determine if a task should be executed, you can use the `should_execute` method. It compares the current time with the next execution time based on the task's cron expression and the configured interval.
+
 ```python
 if task.should_execute():
     # Execute the task
 ```
 
-9. Create an `Orchestrator` object to manage multiple tasks:
-```python
-orchestrator = Orchestrator()
-```
+This method returns a boolean value indicating whether the task should be executed at the current time.
 
-10. Add tasks to the orchestrator using the `add_task` method:
-```python
-task = orchestrator.add_task(cron_expression, script_type)
-```
-- `cron_expression` (str): A cron expression specifying the schedule of the task.
-- `script_type` (str): The type of script to execute, either 'bash' or 'python'.
 
-11. Execute all tasks using the `execute_tasks` method:
+### Executing Tasks<a name="executing-tasks"></a>
+
+Once you have added tasks to the orchestrator, you can start executing them by calling the `execute_tasks` method. This method will continuously check if any tasks need to be executed based on their cron expressions and execute the corresponding scripts.
+
 ```python
 orchestrator.execute_tasks()
 ```
 
-Note: The script will run indefinitely, executing tasks based on their schedules and intervals.
 
-## Example
-
-Here's an example usage of the script:
-
-```python
-# Create a Task
-task = Task("*/5 * * * *", "bash", interval=5)
-
-# Add scripts to the task
-task.add_script("script.sh")
-task.add_script("another_script.sh", {"param1": "value1", "param2": "value2"})
-
-# Add skip conditions
-task.add_skip(False)  # Do not skip this task
-
-# Create a Orchestrator
-orchestrator = Orchestrator()
-
-# Add the task to the orchestrator
-orchestrator.add_task("0 0 * * *", "python")
-
-# Execute all tasks
+The script(s) will be executed using the specified `script_type` (e.g., 'bash' or 'python').
