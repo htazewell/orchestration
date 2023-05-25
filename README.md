@@ -9,8 +9,6 @@ The Orchestration library provides functionality to schedule and execute tasks b
   - [Adding Tasks](#adding-tasks)
   - [Adding Scripts](#adding-scripts)
   - [Adding Skip Conditions](#adding-skip-conditions)
-  - [Repeating Scripts](#repeating-scripts)
-  - [Determining Execution](#determining-execution)
   - [Executing Tasks](#executing-tasks)
 
 ## Installation<a name="installation"></a>
@@ -52,6 +50,12 @@ You can add scripts to a task using the `add_script` method. The `add_script` me
 task.add_script('/path/to/script.sh', {'param1': 'value1', 'param2': 'value2'})
 ```
 
+The `script_parameters` argument can also take a list of dictionaries if you need to run the same script multiple times with different parameters
+
+```python
+task.add_script('/path/to/script.sh', [{'param1': 'value1', 'param2': 'value2'}, {'param1': 'value3', 'param2': 'value4'}])
+```
+
 ### Adding Skip Conditions<a name="adding-skip-conditions"></a>
 
 Skip conditions allow you to specify conditions under which a task should be skipped during execution. You can add skip conditions to a task using the `add_skip` method.
@@ -60,25 +64,6 @@ Skip conditions allow you to specify conditions under which a task should be ski
 task.add_skip(some_skip_condition)
 ```
 
-
-### Repeating Scripts<a name="repeating-scripts"></a>
-
-If you want to repeat the execution of a script with different parameters, you can use the `repeat` method. The `repeat` method takes the `script_path` argument and a list of `parameters_list`, where each `parameters` is a dictionary of parameters to pass to the script.
-
-```python
-task.repeat('/path/to/script.sh', [{'param1': 'value1'}, {'param2': 'value2'}])
-```
-
-### Determining Execution<a name="determining-execution"></a>
-
-To determine if a task should be executed, you can use the `should_execute` method. It compares the current time with the next execution time based on the task's cron expression and the configured interval.
-
-```python
-if task.should_execute():
-    # Execute the task
-```
-
-This method returns a boolean value indicating whether the task should be executed at the current time.
 
 
 ### Executing Tasks<a name="executing-tasks"></a>
