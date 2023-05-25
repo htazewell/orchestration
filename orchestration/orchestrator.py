@@ -1,6 +1,6 @@
 import logging
 import time
-from task import Task
+from orchestration.task import Task
 
 
 class Orchestrator:
