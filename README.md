@@ -8,6 +8,7 @@ The Orchestration library provides functionality to schedule and execute tasks b
   - [Creating an Orchestrator](#creating-an-orchestrator)
   - [Adding Tasks](#adding-tasks)
   - [Adding Scripts](#adding-scripts)
+  - [Adding Repeats](#adding-repeats)
   - [Adding Skip Conditions](#adding-skip-conditions)
   - [Executing Tasks](#executing-tasks)
 
@@ -50,10 +51,12 @@ You can add scripts to a task using the `add_script` method. The `add_script` me
 task.add_script('/path/to/script.sh', {'param1': 'value1', 'param2': 'value2'})
 ```
 
-The `script_parameters` argument can also take a list of dictionaries if you need to run the same script multiple times with different parameters
+### Adding Repeats<a name="adding-repeats"></a>
+
+You can run the same script multiple times with different parameters using the `add_repeat` method. The `add_repeat` method takes the `script_path` argument, which specifies the path to the script file, and a `script_parameters` argument, which is a list of dictionaries of parameters to pass to the script.
 
 ```python
-task.add_script('/path/to/script.sh', [{'param1': 'value1', 'param2': 'value2'}, {'param1': 'value3', 'param2': 'value4'}])
+task.add_repeat('/path/to/script.sh', [{'param1': 'value1', 'param2': 'value2'}, {'param1': 'value3', 'param2': 'value4'}])
 ```
 
 ### Adding Skip Conditions<a name="adding-skip-conditions"></a>
